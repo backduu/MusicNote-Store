@@ -1,0 +1,8 @@
+﻿store/gradle
+*.gradle
+store/gradlew
+*.bat
+*.gitattributes
+.idea
+store/src/main/resources
+store/src/test
