@@ -39,34 +39,22 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max= 50)
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @NotBlank
-    @Size(max= 50)
     @Column(nullable = false, length = 50)
     private String name;
 
-    @NotBlank
-    @Pattern(regexp = "^\\d{10,11}$", message = "전화번호는 10~11자리 숫자여야 합니다.")
     @Column(nullable = false, unique = true, length = 11)
     private String phone;
 
-    @NotBlank
-    @Size(max=50)
-    @Column(nullable = false, length = 60)
+    @Column(nullable = false, length = 150)
     private String password;
 
-    @NotBlank
-    @Size(max=50)
     @Column(nullable = false, length = 50)
     private String nickname;
 
-    @Email
-    @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
     @Enumerated(EnumType.STRING)

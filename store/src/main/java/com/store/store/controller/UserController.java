@@ -1,5 +1,6 @@
 package com.store.store.controller;
 
+import com.store.store.domain.entity.User;
 import com.store.store.dto.UserDTO;
 import com.store.store.repository.UserRepository;
 import com.store.store.service.UserService;
@@ -7,9 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,5 +26,11 @@ public class UserController {
         List<UserDTO.UpdateRequest> users = userService.getAllUsers();
 
         return ResponseEntity.ok().body(users);
+    }
+
+    @Operation(summary = "회원가입", description = "새로운 사용자를 등록합니다. 가입 시 상태는 'PENDING'이 됩니다.")
+    @PostMapping("/signup")
+    public ResponseEntity<UserDTO.Response> signupUser(@RequestBody UserDTO.Request userDTO) {
+        return ResponseEntity.ok(userService.signup(userDTO));
     }
 }

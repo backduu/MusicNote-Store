@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface UserService {
     List<UserDTO.UpdateRequest> getAllUsers();
+
+    UserDTO.Response signup(UserDTO.Request request);
 }
