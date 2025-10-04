@@ -32,6 +32,7 @@ import java.util.List;
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
+@Getter
 @Builder
 public class User implements UserDetails {
     @Id
@@ -147,15 +148,5 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getUsername() { return username; }
-    @Override
-    public String getPassword() { return password; }
-    @Override
     public boolean isEnabled() { return status == UserStatus.ACTIVE; }
-    @Override
-    public boolean isAccountNonExpired() { return true; }
-    @Override
-    public boolean isAccountNonLocked() { return true; }
-    @Override
-    public boolean isCredentialsNonExpired() { return true; }
 }
