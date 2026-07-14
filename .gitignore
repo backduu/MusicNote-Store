@@ -6,3 +6,4 @@ store/gradlew
 .idea
 store/src/main/resources
 store/src/test
+*.iml
