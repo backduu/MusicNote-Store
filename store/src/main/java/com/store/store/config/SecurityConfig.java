@@ -44,7 +44,7 @@ public class SecurityConfig {
                         // 0. 구체적인 경로를 먼저 설정
                         .requestMatchers("/api/auth/change").authenticated()
                         // 1. 인증 없이 접근 가능한 경로
-                        .requestMatchers("/api/auth/**","/api/user/signup", "/api/products/carousel/new", "/api/products/**").permitAll()
+                        .requestMatchers("/api/auth/**","/api/user/signup", "/api/products/**").permitAll()
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
@@ -89,10 +89,11 @@ public class SecurityConfig {
         return source;
     }
 
-    // Spring security6 부터는 DaoAuthenticationProvider#setUserDetailsService(...) 메서드가 Deprecated되어 생성자에서 바로 주입받는 방식으로 바뀜.
+    // !!! Spring security6 부터는 DaoAuthenticationProvider의 설정을 setter를 통해 주입하는 방식을 권장한다.
     @Bean
     public DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
