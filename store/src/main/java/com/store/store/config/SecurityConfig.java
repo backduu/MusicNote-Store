@@ -44,7 +44,7 @@ public class SecurityConfig {
                         // 0. 구체적인 경로를 먼저 설정
                         .requestMatchers("/api/auth/change").authenticated()
                         // 1. 인증 없이 접근 가능한 경로
-                        .requestMatchers("/api/auth/**","/api/user/signup", "/api/products/carousel/new", "/api/products/**").permitAll()
+                        .requestMatchers("/api/auth/**","/api/user/signup", "/products/carousel/new", "/api/products/**", "/products/**").permitAll()
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
