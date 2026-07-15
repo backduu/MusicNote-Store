@@ -89,10 +89,11 @@ public class SecurityConfig {
         return source;
     }
 
-    // Spring security6 부터는 DaoAuthenticationProvider#setUserDetailsService(...) 메서드가 Deprecated되어 생성자에서 바로 주입받는 방식으로 바뀜.
+    // !!! Spring security6 부터는 DaoAuthenticationProvider의 설정을 setter를 통해 주입하는 방식을 권장한다.
     @Bean
     public DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
