@@ -14,6 +14,9 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p FROM Product p " +
             "WHERE p.createdAt BETWEEN :start AND :end " +
