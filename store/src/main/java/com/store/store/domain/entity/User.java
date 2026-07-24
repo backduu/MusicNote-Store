@@ -3,13 +3,8 @@ package com.store.store.domain.entity;
 import com.store.store.domain.enums.UserRole;
 import com.store.store.domain.enums.UserStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -121,6 +116,22 @@ public class User implements UserDetails {
         if (newUsername != null && !newUsername.isBlank()) {
             this.username = newUsername;
         }
+    }
+
+    public void initUser(String email,
+                         String name,
+                         String nickname,
+                         String phone,
+                         UserRole role,
+                         UserStatus status) {
+        this.email = email;
+        this.name = name;
+        this.nickname = nickname;
+        this.phone = phone;
+        this.role = role;
+        this.status = status;
+        this.updated = LocalDateTime.now();
+        this.created = LocalDateTime.now();
     }
 
     public void changeNickname(String newNickname) {
