@@ -11,16 +11,19 @@
  ┃ ┣ 📜 AWS_EC2_S3_DEPLOY.md    # AWS 배포 및 S3 서명 URL 설정법 (안쓸수도 있고, 홈서버 구축이 될 수도 있음)
  ┃ ┗ 📜 CI_CD_PIPELINE.md       # GitHub Actions 자동 배포 흐름도
  ┃
- ┣ 📂 02-architecture/        # 설계, ERD, 컨벤션
+ ┣ 📂 02-CS/        # 백엔드 자료
+ ┃ ┗ 📜 Builder and JPA Dirty checking.md 
+ ┃
+ ┣ 📂 03-architecture/        # 설계, ERD, 컨벤션
  ┃ ┣ 📜 ERD_AND_DOMAIN.md       # 데이터베이스 ERD 구조도 및 엔티티 관계 설명
  ┃ ┣ 📜 CODING_CONVENTION.md    # Java/Spring 깃 커밋 메세지, 코드 컨벤션 약속
  ┃ ┗ 📜 SECURITY_FLOW.md        # JWT 인증/인가 및 Security 필터 동작 시퀀스
  ┃
- ┣ 📂 03-api/                 # API 명세 및 통신 규칙
+ ┣ 📂 04-api/                 # API 명세 및 통신 규칙
  ┃ ┣ 📜 ERROR_CODES.md          # 예외 처리(Custom Exception) 및 에러 코드 명세서
  ┃ ┗ 📜 CORS_AND_AUTH_HEADER.md # FE(Vue3) - BE(Spring) 간 CORS 및 토큰 전달 규칙
  ┃
- ┗ 📂 04-troubleshooting/     # 💥 삽질과 극복의 기록 
+ ┗ 📂 05-troubleshooting/     # 💥 삽질과 극복의 기록 
    ┣ 📜 TS_01_DOCKER_PORT_CONFLICT.md  # 1521 포트 충돌 및 APP_USER_PASSWORD 에러 해결
 ```
 
