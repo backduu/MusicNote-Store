@@ -179,4 +179,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             @Param("searchTerm") String searchTerm,
             Pageable pageable
     );
+
+    boolean existsByTitle(String title);
 }

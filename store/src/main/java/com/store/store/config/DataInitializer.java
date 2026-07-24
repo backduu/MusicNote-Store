@@ -14,7 +14,9 @@ import com.store.store.repository.ProductRepository;
 import com.store.store.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,6 +25,7 @@ import java.util.List;
 
 @Component
 @Slf4j
+@Profile("dev")
 public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
@@ -40,26 +43,37 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
-      log.info("[SYSTEM] 로컬 개발용 초기 데이터 주입 시작");
+      log.info("[SYSTEM] 로컬 개발용 초기 데이터 주입");
 
-        User user = User.builder()
-                .username("music_lover")
-                .email("lover@musicnote.com")
-                .name("홍길동")
-                .nickname("음악대장")
-                .password("hashed_password_here")
-                .phone("01012345678")
-                .role(UserRole.USER)
-                .status(UserStatus.ACTIVE)
-                .created(LocalDateTime.now())
-                .approvedAt(LocalDateTime.now())
-                .build();
-        if (userRepository.findByUsername("music_lover").isPresent()) {
-            return;
-        }
+        User savedUser = userRepository.findByUsername("music_lover")
+                        .map(existedUser -> {
+                            existedUser.initUser(
+                                    "lover@musicnote.com",
+                                    "홍길동",
+                                    "음악대장",
+                                    "01012345678",
+                                    UserRole.USER,
+                                    UserStatus.ACTIVE
+                            );
 
-        User savedUser = userRepository.save(user);
+                            return existedUser;
+                        })
+                .orElseGet(() -> userRepository.save(
+                        User.builder()
+                                .username("music_lover")
+                                .email("lover@musicnote.com")
+                                .name("홍길동")
+                                .nickname("음악대장")
+                                .password("hashed_password_here")
+                                .phone("01012345678")
+                                .role(UserRole.USER)
+                                .status(UserStatus.ACTIVE)
+                                .created(LocalDateTime.now())
+                                .approvedAt(LocalDateTime.now())
+                                .build()
+                ));
 
         /* ------------------------------------------------------------
          * 2. PRODUCTS (상품) 30개 데이터 생성
@@ -76,9 +90,15 @@ public class DataInitializer implements CommandLineRunner {
             int idx = (i - 1) % 10;
             String type = types[idx];
             String titleSuffix = type.equals("ALBUM") ? " " + (i/10 + 1) + "집 앨범 [Vol." + i + "]" : " 피아노 연주곡 악보 Vol." + i;
+            String title = creators[idx] + titleSuffix;
+
+            // 이미 존재하는 상품은 건너뜀
+            if (productRepository.existsByTitle(title)) {
+                continue;
+            }
 
             Product product = Product.builder()
-                    .title(creators[idx] + titleSuffix)
+                    .title(title)
                     .price(new BigDecimal(basePrices[idx] + (i * 100))) // 가격에 조금씩 차이를 둠
                     .creator(creators[idx])
                     .genre(genres[idx])
@@ -92,24 +112,31 @@ public class DataInitializer implements CommandLineRunner {
             productsToSave.add(product);
         }
 
-        // 30개 상품 한 번에 DB 인서트 (Batch)
-        List<Product> savedProducts = productRepository.saveAll(productsToSave);
-        System.out.println("📦 [System] " + savedProducts.size() + "개의 상품 데이터 주입 완료!");
+        // 30개 상품 일괄 저장
+        if (!productsToSave.isEmpty()) {
+            productRepository.saveAll(productsToSave);
+            System.out.println("[System] " + productsToSave.size() + "개의 신규 상품 데이터 세이브 완료!");
+        }
+
+        List<Product> savedProducts = productRepository.findAll();
 
         /* ------------------------------------------------------------
-         * 3. CART (장바구니) 생성 - Builder 방식
+         * 3. CART (장바구니) 생성 - 존재 여부 확인 후 처리
          * ------------------------------------------------------------ */
-        Cart cart = Cart.builder()
-                .user(savedUser)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        Cart savedCart = cartRepository.save(cart);
+        Cart savedCart = cartRepository.findByUser(savedUser)
+                .orElseGet(() -> cartRepository.save(
+                        Cart.builder()
+                                .user(savedUser)
+                                .createdAt(LocalDateTime.now())
+                                .updatedAt(LocalDateTime.now())
+                                .build()
+                ));
 
         /* ------------------------------------------------------------
-         * 4. CART_ITEMS (장바구니 아이템) 3건 담기 - Builder 방식
+         * 4. CART_ITEMS 장바구니에 3건 담기 - 기존 아이템 삭제 후 새로 담기
          * ------------------------------------------------------------ */
+        cartItemRepository.deleteAllByCart(savedCart);
+
         // 방금 생성된 30개 상품 중 1번, 5번, 10번 상품을 장바구니에 담기
         Product pick1 = savedProducts.get(0);
         Product pick2 = savedProducts.get(4);
