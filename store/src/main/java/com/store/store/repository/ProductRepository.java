@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -181,4 +182,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     );
 
     boolean existsByTitle(String title);
+
+    Optional<Product> findByTitle(String title);
 }

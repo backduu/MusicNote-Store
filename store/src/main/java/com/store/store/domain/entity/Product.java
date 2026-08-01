@@ -98,6 +98,10 @@ public class Product {
         }
     }
 
+    // 생성일자 업데이트 메소드
+    public void updateCreatedAt() {
+        this.createdAt = LocalDateTime.now();
+    }
     public void removeTag(Tag tag) {
         this.productTags.removeIf(pt -> pt.getTag().equals(tag));
     }

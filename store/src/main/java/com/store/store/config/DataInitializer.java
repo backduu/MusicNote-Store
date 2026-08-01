@@ -92,24 +92,27 @@ public class DataInitializer implements CommandLineRunner {
             String titleSuffix = type.equals("ALBUM") ? " " + (i/10 + 1) + "집 앨범 [Vol." + i + "]" : " 피아노 연주곡 악보 Vol." + i;
             String title = creators[idx] + titleSuffix;
 
-            // 이미 존재하는 상품은 건너뜀
-            if (productRepository.existsByTitle(title)) {
-                continue;
-            }
+            // 이미 존재하는 상품은 createdAt만 오늘 날짜로 업뎃
+            final int lambdaIdx = i;
+            productRepository.findByTitle(title).ifPresentOrElse(
+                    Product::updateCreatedAt,
+                    () -> {
+                        Product product = Product.builder()
+                                .title(title)
+                                .price(new BigDecimal(basePrices[idx] + (lambdaIdx * 100))) // 가격에 조금씩 차이를 둠
+                                .creator(creators[idx])
+                                .genre(genres[idx])
+                                .type(ProductType.valueOf(type))
+                                .status(ProductStatus.valueOf("ONSALE"))
+                                .description(creators[idx] + "의 최고의 감성을 담은 " + (type.equals("ALBUM") ? "명반" : "악보") + "입니다.")
+                                .seller(savedUser) // 1순위 회원을 판매자로 매핑
+                                .createdAt(LocalDateTime.now())
+                                //.createdAt(LocalDateTime.now().minusDays(30 - i)) // 최신순 정렬 테스트를 위해 날짜 분산
+                                .build();
 
-            Product product = Product.builder()
-                    .title(title)
-                    .price(new BigDecimal(basePrices[idx] + (i * 100))) // 가격에 조금씩 차이를 둠
-                    .creator(creators[idx])
-                    .genre(genres[idx])
-                    .type(ProductType.valueOf(type))
-                    .status(ProductStatus.valueOf("ONSALE"))
-                    .description(creators[idx] + "의 최고의 감성을 담은 " + (type.equals("ALBUM") ? "명반" : "악보") + "입니다.")
-                    .seller(savedUser) // 1순위 회원을 판매자로 매핑
-                    .createdAt(LocalDateTime.now().minusDays(30 - i)) // 최신순 정렬 테스트를 위해 날짜 분산
-                    .build();
-
-            productsToSave.add(product);
+                        productsToSave.add(product);
+                    }
+            );
         }
 
         // 30개 상품 일괄 저장
