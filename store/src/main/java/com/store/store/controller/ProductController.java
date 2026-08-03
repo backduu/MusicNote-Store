@@ -22,6 +22,16 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
 
+    @GetMapping("/global-search")
+    @Operation(summary = "상품 통합 검색", description = "모든 상품(ONSALE/SOLDOUT)을 검색합니다.")
+    public ResponseEntity<List<ProductDTO.Response>> searchProducts(
+            @RequestParam(required = true) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size
+    ) {
+        return ResponseEntity.ok(productService.searchProducts(keyword, page, size));
+    }
+
     @Operation(summary = "캐루셀 음원 조회", description = "상품이 'ONSALE'인 상태의 금주에 나온 상품을 조회합니다.")
     @GetMapping("/carousel/new")
     public ResponseEntity<List<ProductDTO.Response>> getWeeklyNewProducts(

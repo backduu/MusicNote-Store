@@ -16,6 +16,7 @@ import com.store.store.repository.CartItemRepository;
 import com.store.store.repository.CartRepository;
 import com.store.store.repository.ProductRepository;
 import com.store.store.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -261,8 +262,8 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        // 2. 정렬 기준에 따라 분기
         List<Product> products;
+
         if (sort.equalsIgnoreCase("LIKE")) {
             products = productRepository.findSheetArchiveByMetric(
                     ProductStatus.ONSALE, type, region, genre, instrument,
@@ -280,9 +281,17 @@ public class ProductServiceImpl implements ProductService {
             );
         }
 
-        // 3. DTO 변환
         return products.stream()
                 .map(productMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    public List<ProductDTO.Response> searchProducts(String keyword, int page, int size) {
+
+
+        return List.of();
+    }
+
+
 }
