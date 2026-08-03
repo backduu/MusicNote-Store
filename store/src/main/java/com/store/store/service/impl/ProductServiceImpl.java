@@ -249,7 +249,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO.Response> getSheetArchive(ProductType type, String region, String period, String sort, String genre, int page, int size
             , String searchTerm, String instrument, Difficulty difficulty, String era) {
-        // 1. 기간 계산
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start;
         switch (period.toUpperCase()) {
@@ -288,9 +287,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO.Response> searchProducts(String keyword, int page, int size) {
+        if (keyword != null && !keyword.isBlank()) {
+            // TODO: throw new CustomException("검색어를 입력해주세요.");
+            return List.of();
+        }
+
+        String trimmedKeyword = keyword.trim();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        List<Product> products = productRepository.searchByKeyword(trimmedKeyword, pageable);
 
 
-        return List.of();
+        return products.stream()
+                .map(productMapper::toResponse)
+                .toList();
     }
 
 
