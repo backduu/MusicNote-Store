@@ -287,7 +287,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO.Response> searchProducts(String keyword, int page, int size) {
-        if (keyword != null && !keyword.isBlank()) {
+        if (keyword == null || !keyword.isBlank()) {
             // TODO: throw new CustomException("검색어를 입력해주세요.");
             return List.of();
         }
