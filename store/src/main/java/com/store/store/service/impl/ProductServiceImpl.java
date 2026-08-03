@@ -6,12 +6,10 @@ import com.store.store.domain.entity.Cart;
 import com.store.store.domain.entity.CartItem;
 import com.store.store.domain.entity.Product;
 import com.store.store.domain.entity.User;
-import com.store.store.domain.enums.Difficulty;
-import com.store.store.domain.enums.MetricType;
-import com.store.store.domain.enums.ProductStatus;
-import com.store.store.domain.enums.ProductType;
+import com.store.store.domain.enums.*;
 import com.store.store.dto.CartDTO;
 import com.store.store.dto.ProductDTO;
+import com.store.store.exception.MusicNoteException;
 import com.store.store.repository.CartItemRepository;
 import com.store.store.repository.CartRepository;
 import com.store.store.repository.ProductRepository;
@@ -287,9 +285,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO.Response> searchProducts(String keyword, int page, int size) {
-        if (keyword == null || !keyword.isBlank()) {
-            // TODO: throw new CustomException("검색어를 입력해주세요.");
-            return List.of();
+        if (keyword == null || keyword.isBlank()) {
+            throw new MusicNoteException(ErrorCode.INVALID_INPUT.getMessage(), ErrorCode.INVALID_INPUT);
         }
 
         String trimmedKeyword = keyword.trim();
