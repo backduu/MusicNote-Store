@@ -6,16 +6,15 @@ import com.store.store.domain.entity.Cart;
 import com.store.store.domain.entity.CartItem;
 import com.store.store.domain.entity.Product;
 import com.store.store.domain.entity.User;
-import com.store.store.domain.enums.Difficulty;
-import com.store.store.domain.enums.MetricType;
-import com.store.store.domain.enums.ProductStatus;
-import com.store.store.domain.enums.ProductType;
+import com.store.store.domain.enums.*;
 import com.store.store.dto.CartDTO;
 import com.store.store.dto.ProductDTO;
+import com.store.store.exception.MusicNoteException;
 import com.store.store.repository.CartItemRepository;
 import com.store.store.repository.CartRepository;
 import com.store.store.repository.ProductRepository;
 import com.store.store.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -248,7 +247,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO.Response> getSheetArchive(ProductType type, String region, String period, String sort, String genre, int page, int size
             , String searchTerm, String instrument, Difficulty difficulty, String era) {
-        // 1. 기간 계산
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start;
         switch (period.toUpperCase()) {
@@ -261,8 +259,8 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        // 2. 정렬 기준에 따라 분기
         List<Product> products;
+
         if (sort.equalsIgnoreCase("LIKE")) {
             products = productRepository.findSheetArchiveByMetric(
                     ProductStatus.ONSALE, type, region, genre, instrument,
@@ -280,9 +278,27 @@ public class ProductServiceImpl implements ProductService {
             );
         }
 
-        // 3. DTO 변환
         return products.stream()
                 .map(productMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    public List<ProductDTO.Response> searchProducts(String keyword, int page, int size) {
+        if (keyword == null || keyword.isBlank()) {
+            throw new MusicNoteException(ErrorCode.INVALID_INPUT.getMessage(), ErrorCode.INVALID_INPUT);
+        }
+
+        String trimmedKeyword = keyword.trim();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        List<Product> products = productRepository.searchByKeyword(trimmedKeyword, pageable);
+
+
+        return products.stream()
+                .map(productMapper::toResponse)
+                .toList();
+    }
+
+
 }

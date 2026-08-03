@@ -184,4 +184,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     boolean existsByTitle(String title);
 
     Optional<Product> findByTitle(String title);
+
+    @Query("""
+        SELECT p
+        FROM Product p
+        WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(p.creator) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        ORDER BY p.createdAt DESC
+    """)
+    List<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }

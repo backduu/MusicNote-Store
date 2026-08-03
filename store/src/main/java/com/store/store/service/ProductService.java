@@ -32,5 +32,7 @@ public interface ProductService {
 
     List<ProductDTO.Response> getSheetArchive(ProductType type, String region, String period, String sort, String genre, int page, int size
                                             , String searchTerm, String instrument, Difficulty difficulty, String era);
+
+    List<ProductDTO.Response> searchProducts(String keyword, int page, int size);
 }
 
