@@ -6,6 +6,14 @@
 
 ```text
 📦 docs/
+📦 docs/frontend
+ ┃ 
+ ┣ 📂 01-infra/               # 인프라, 환경 구축, 배포 관련
+ ┃
+ ┗ 📂 02-troubleshooting/
+ 
+📦 docs/backend
+ ┃ 
  ┣ 📂 01-infra/               # 인프라, 환경 구축, 배포 관련
  ┃ ┣ 📜 DOCKER_ORACLE_SETUP.md  # 도커 DB 가이드
  ┃ ┣ 📜 AWS_EC2_S3_DEPLOY.md    # AWS 배포 및 S3 서명 URL 설정법 (안쓸수도 있고, 홈서버 구축이 될 수도 있음)
